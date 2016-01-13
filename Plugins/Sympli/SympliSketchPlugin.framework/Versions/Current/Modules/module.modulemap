@@ -1,0 +1,6 @@
+framework module SympliSketchPlugin {
+  umbrella header "SympliSketchPlugin.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,53 @@
+// Export selected artboard (cmd y)
+
+(function () {
+
+function loadFramework(pluginRoot) {
+  if (NSClassFromString('Sympli') == null) {
+    var mocha = [Mocha sharedRuntime];
+    log("Looking for framework at: " + pluginRoot )
+    return [mocha loadFrameworkWithName:"SympliSketchPlugin" inDirectory:pluginRoot];
+  } else {
+    return true;
+  }
+}
+
+    try {
+        [doc saveDocumentWithDelegate:nil didSaveSelector:null contextInfo:null];
+        
+        if (!doc.isDraft()) {
+    	    var selectedArtboards = [context valueForKey:@"selection"];
+            
+            if (![selectedArtboards count]) {
+                   
+                   selectedArtboards = [[doc currentPage] artboards];
+                   
+                   if (![selectedArtboards count]) {
+                       var app = [NSApplication sharedApplication];
+	               [app displayDialog:"Please create an artboard for export." withTitle:"Sympli"]      
+    	               return;
+    	           }
+            }
+            
+            var selectedArtboardsIds = [selectedArtboards valueForKeyPath:@"parentArtboard.@distinctUnionOfObjects.objectID"]; 
+                
+            var pluginRoot = sketch.scriptPath.stringByDeletingLastPathComponent();
+            
+            var loadFrameworkResult = loadFramework(pluginRoot);
+            
+            log("Framework loaded: " + loadFrameworkResult)
+            log("Processing file: " + doc.fileURL().path())
+
+            var sympli = [[Sympli alloc] init];
+    	    log("Initialized Sympli")
+    	    
+            [sympli process: doc.fileURL().path() withPath: pluginRoot andArtboards: selectedArtboardsIds document: doc artboards: [selectedArtboards valueForKeyPath:@"parentArtboard.@distinctUnionOfObjects.self"]];
+            log("call sympli: " + loadFrameworkResult)
+        } else {
+            doc.showMessage("Please save the document, so we have all your changes.");
+        }
+    } catch (err) {
+        doc.showMessage("Sympli: Houston, we have a problem.");
+        log(err);
+    }
+}());

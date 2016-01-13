@@ -1,0 +1,22 @@
+if [ -d "$HOME/Library/Containers/com.bohemiancoding.sketch3/Data/Library/Application Support/com.bohemiancoding.sketch3/Plugins/Sympli" ]
+then
+
+/usr/bin/osascript<<EOF
+set pathwithSpaces to "$HOME/Library/Containers/com.bohemiancoding.sketch3/Data/Library/Application Support/com.bohemiancoding.sketch3/Plugins/Sympli/Uninstall.sh"
+do shell script quoted form of pathwithSpaces
+display dialog "Sympli Sketch Plugin Uninstalled"
+EOF
+
+else
+
+/usr/bin/osascript<<EOF
+set pathwithSpaces to "$HOME/Library/Application Support/com.bohemiancoding.sketch3/Plugins/Sympli/Uninstall.sh"
+do shell script quoted form of pathwithSpaces
+display dialog "Sympli Sketch Plugin Uninstalled"
+EOF
+
+fi
+
+/usr/sbin/pkgutil --forget "com.eastbanctech.sketch.sympli.plugin" >/dev/null 2>&1
+
+exit 0
